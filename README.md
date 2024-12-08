@@ -9,10 +9,13 @@ in the future you would be able to load a CpGs list file (.txt \ .cpg)
 ## requinments 
 tkinter, pandas, matplotlib
 
-download the program,
+download main.py,
 run it through an IDE (i did not check if it runs though the terminal yet)
 choose files (TP1,TP2,TP3,TP4)
 choose location to save the graph 
 graphs would be represented in the location graph
 
 currently it ask each image for location, i might fix it 
+
+# example
+there is two images example for an output from the methylation array GSE142512 (was normalized and seperated to TP, if you want that code contact noameyrom@mail.tau.ac.il)
