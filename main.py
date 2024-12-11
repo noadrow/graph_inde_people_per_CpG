@@ -4,11 +4,11 @@ import pandas as pd
 
 # load CpG
 ## DUSP example and random bi-modal site example
-CpGs = ["cg01171360","cg10157098"]
+#CpGs = ["cg01171360","cg10157098"]
 
 #load CpG list - in the future allow to load number of CpGs
-#file_path3 = askopenfilename(title="Select CpG list file", filetypes=[("txt\cpg files", "*.txt *.cpg")])
-#CpGs = open(f"{file_path3}","r").read().splitlines()
+file_path3 = askopenfilename(title="Select CpG list file", filetypes=[("txt\cpg files", "*.txt *.cpg")])
+CpGs = open(f"{file_path3}","r").read().splitlines()
 
 # graph each person on x axis
 # graph each methylation level on y axis (graph the difference between max time point to min time point)
@@ -28,7 +28,8 @@ dfs = [df1, df2, df3, df4]
 def prepare_dfs(cpg,dfs):
     dfs_CpGs = []
     for df in dfs:
-        dfs_CpGs.append(df.loc[cpg])
+        if cpg in df.index:
+            dfs_CpGs.append(df.loc[cpg])
 
     gsms = []
     for df in dfs_CpGs:
@@ -51,22 +52,23 @@ def order_data(new_df,gsms,dfs_CpGs,cpg):
                 new_df[TP].iloc[i] = value
                 i += 1
 
-    extract_methylation_values(new_df,dfs_CpGs[0],gsms[0],'methylation_TP1')
-    extract_methylation_values(new_df,dfs_CpGs[1],gsms[1],'methylation_TP2')
-    extract_methylation_values(new_df,dfs_CpGs[2],gsms[2],'methylation_TP3')
-    extract_methylation_values(new_df,dfs_CpGs[3],gsms[3],'methylation_TP4')
+    if not dfs_CpGs == []:
+        extract_methylation_values(new_df,dfs_CpGs[0],gsms[0],'methylation_TP1')
+        extract_methylation_values(new_df,dfs_CpGs[1],gsms[1],'methylation_TP2')
+        extract_methylation_values(new_df,dfs_CpGs[2],gsms[2],'methylation_TP3')
+        extract_methylation_values(new_df,dfs_CpGs[3],gsms[3],'methylation_TP4')
 
-    def calc_max_diff(new_df):
-        differences = []
-        for gsm in new_df.index:
-            difference = new_df.iloc[gsm].max() - new_df.iloc[gsm].min()
-            differences.append(difference)
+        def calc_max_diff(new_df):
+            differences = []
+            for gsm in new_df.index:
+                difference = new_df.iloc[gsm]['methylation_TP1'] - new_df.iloc[gsm]['methylation_TP2']
+                differences.append(difference)
 
-        result_df = pd.DataFrame(differences, columns=["Max_Min_Difference"])
-        return result_df
+            result_df = pd.DataFrame(differences, columns=["Max_Min_Difference"])
+            return result_df
 
-    clean_df = new_df[:34]
-    diff_df = calc_max_diff(clean_df)
+        clean_df = new_df[:34]
+        diff_df = calc_max_diff(clean_df)
 
     def plot_results(diff_df,cpg=cpg):
         import matplotlib.pyplot as plt
@@ -79,20 +81,23 @@ def order_data(new_df,gsms,dfs_CpGs,cpg):
         # Add labels and title
         plt.xlabel("GSM Index Number")
         plt.ylabel("Methylation Number")
-        plt.title(f"Methylation Levels mix(TP)-Max(TP) by GSM Index for {cpg}")
+        plt.title(f"Methylation Levels (TP1)-(TP2) by GSM Index for {cpg}")
 
         # Set ticks to match GSM indices
         plt.xticks(ticks=range(len(diff_df.index)), labels=diff_df.index, rotation=45)
 
         # Set y-axis range
-        plt.ylim(0, 1)
+        plt.ylim(-1, 1)
 
         # Show the plot
         plt.tight_layout()
         folder_path = filedialog.askdirectory(title="Select a Folder to save plot")
         plt.savefig(f"{folder_path}/{cpg}.png")
 
-    plot_results(diff_df)
+    try:
+        plot_results(diff_df)
+    except:
+        print("no data!")
 
 for cpg in CpGs:
     new_df,gsms,dfs_CpGs = prepare_dfs(cpg=cpg,dfs=dfs)
