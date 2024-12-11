@@ -14,14 +14,24 @@ t5_model = T5ForConditionalGeneration.from_pretrained(T5_PATH, config=t5_config)
 
 # Input text that instructs the model to guess the output
 text = """
-prompt 1: what are you reacting to? "I'm reacting to": 
-prompt 2: <extra_id_0>
-prompt 3: <extra_id_1>
-prompt 4: <extra_id_2>
-prompt 5: <extra_id_3>
-prompt 6: <extra_id_4>
-reflect on it
-</s>
+שקף את האמירה הבאה:
+ותן לי3 תשובות 
+שמי נועה
+אני בת 26
+כרגע
+תעזור לי לגלות איך AP-1 
+קשור לדיכוי של גנים 
+שקשורים ל זיכרון
+
+בכרומוזום x
+
+תניח שאתה ביולוג
+ותענה תשובה של ביולוג
+<extra_id_0>
+<extra_id_1>
+<extra_id_2>
+<extra_id_3>
+<extra_id_4>
 """
 
 
